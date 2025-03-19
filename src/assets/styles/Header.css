@@ -1,0 +1,30 @@
+.header-wrap {
+    display: flex;
+    justify-content: space-between;
+    background-color: #002984;
+    color: #e8e8e8;
+    padding: 10px;
+}
+
+.logo {
+    font-weight: bold;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #002984;
+    color: #e8e8e8;
+    font-weight: bold;
+}
