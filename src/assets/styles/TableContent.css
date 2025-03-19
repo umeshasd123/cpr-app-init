@@ -1,0 +1,93 @@
+.table-wrapper {
+    overflow: auto;
+    min-height: 84vh;
+}
+
+.metrix-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: .5rem 0 0;
+    font-size: 14px;
+}
+
+.metrix-table th:first-child,
+.metrix-table td:first-child {
+    position: sticky;
+    left: -1px;
+    z-index: 1
+}
+
+.metrix-table td:first-child {
+    background-color: white;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 4px 6px;
+    text-align: left;
+}
+
+.metrix-table thead th {
+    background-color: #002984;
+    color: #e8e8e8;
+    font-weight: bold;
+    position: relative;
+    white-space: nowrap;
+}
+
+.metrix-table .column-filter-wrap,
+.metrix-table .column-filter-wrap td:first-child {
+    background-color: #d6d6d6;
+}
+
+.metrix-table .column-filter-wrap input,
+.metrix-table .column-filter-wrap select {
+    width: calc(100% - 10px);
+    height: 18px;
+}
+
+.global-search {
+    padding: 5px;
+    width: 250px
+}
+
+.metrix-table th.order-asc:before,
+.metrix-table th.order-dsc:before {
+    position: absolute;
+    display: block;
+    top: 50%;
+    content: "\25B2";
+    right: 10px;
+    font-size: 10px;
+    transform: translateY(-50%);
+}
+
+.metrix-table th.order-dsc:before {
+    content: "\25BC";
+}
+
+.table-top {
+    display: flex;
+    justify-content: space-between;
+}
+
+.table-top .act-btn {
+    background-color: #002984;
+    cursor: pointer;
+    color: #e8e8e8;
+    border: 0;
+    border-radius: 2px;
+    max-height: 29px;
+    line-height: 0;
+    padding: 2px 13px;
+}
+
+.table-top .act-btn:hover {
+    background-color: #003aba;
+    color: #fff;
+}
+
+.table-top .act-btn:disabled {
+    opacity: .6;
+}
