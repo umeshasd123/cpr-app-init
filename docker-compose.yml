@@ -1,12 +1,12 @@
 version: "1"
 services:
   cpr-app:
-    image: umesh/cprapp
+    image: umesh/crp-app
     container_name: cpr-app-container
     ports:
       - "3000:3000"
     volumes:
-      - "//c/Users/UmeshMadathil/PROJECT/cpr-app:/app"
+      - "//c/Users/UmeshMadathil/PROJECT/cpr-app-init:/app"
       - "/app/node_modules"
     stdin_open: true # Equivalent to -i
     tty: true # Equivalent to -t
