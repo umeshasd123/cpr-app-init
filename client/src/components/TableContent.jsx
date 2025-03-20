@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import MetrixTable from "./MetrixTable";
 import '../assets/styles/TableContent.css';
 import useMetrixModel from "./tableConfig";
@@ -8,7 +8,7 @@ export default function TableContent() {
     const [isLoading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch("mockData.json")
+        fetch("http://localhost:5000/metrix-data")
             .then((response) => response.json())
             .then((data) => {
                 if (data && data !== '') {
@@ -25,7 +25,7 @@ export default function TableContent() {
 
     //preloader
     if (isLoading) {
-        return <p>Please wait. Data loading....</p>
+        return <p className="loader">Please wait. Data loading....</p>
     }
 
     return <MetrixTable data={tableData} columns={columns} />;

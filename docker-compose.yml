@@ -1,14 +1,34 @@
 version: "1"
+
 services:
-  cpr-app:
-    image: umesh/crp-app
-    container_name: cpr-app-container
+  client:
+    image: umesh/cpr-app
+    container_name: cpr-client-container
+    build:
+      context: ./client
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     volumes:
-      - "//c/Users/UmeshMadathil/PROJECT/cpr-app-init:/app"
+      - "//c/Users/UmeshMadathil/PROJECT/cpr-app-init/client:/app"
       - "/app/node_modules"
     stdin_open: true # Equivalent to -i
     tty: true # Equivalent to -t
     environment:
       CHOKIDAR_USEPOLLING: "true"
+    depends_on:
+      - server
+
+  server:
+    image: umesh/cpr-server
+    container_name: cpr-server-container
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - "//c/Users/UmeshMadathil/PROJECT/cpr-app-init/server:/app"
+      - "/app/node_modules"
+    environment:
+      NODE_ENV: "production"

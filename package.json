@@ -1,41 +1,27 @@
 {
-  "name": "cpr-app",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@tanstack/match-sorter-utils": "^8.19.4",
-    "@tanstack/react-table": "^8.21.2",
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.2.0",
-    "@testing-library/user-event": "^13.5.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-scripts": "^5.0.1",
-    "web-vitals": "^2.1.4"
-  },
+  "name": "cpr-app-init",
+  "version": "1.0.0",
+  "main": "index.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "concurrently \"npm run dev --prefix server\" \"npm start --prefix client\"",
+    "server": "npm run dev --prefix server",
+    "client": "npm start --prefix client",
+    "build": "npm run build --prefix client",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/umeshasd123/cpr-app-init.git"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/umeshasd123/cpr-app-init/issues"
+  },
+  "homepage": "https://github.com/umeshasd123/cpr-app-init#readme",
+  "description": "",
+  "dependencies": {
+    "concurrently": "^9.1.2"
   }
 }

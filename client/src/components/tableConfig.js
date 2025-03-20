@@ -12,20 +12,23 @@ const useMetrixModel = () => {
         {
             id: 'select',
             size: 20,
-            header: ({ table }) => (
-                <input
-                    type="checkbox"
-                    checked={table.getIsAllPageRowsSelected()}
-                    onChange={table.getToggleAllPageRowsSelectedHandler()}
+            header: ({ table }) => {
+                const selectableRows = table.getRowModel().rows.filter(
+                    (row) => row.original.status !== "successful"
+                );
+                const allSelected = selectableRows.every((row) => row.getIsSelected());
+                return <input type="checkbox" checked={allSelected} onChange={(e) => {
+                    selectableRows.forEach((row) => row.toggleSelected(e.target.checked));
+                }}
                 />
-            ),
-            cell: ({ row }) => (
-                <input
-                    type="checkbox"
-                    checked={row.getIsSelected()}
-                    onChange={row.getToggleSelectedHandler()}
-                />
-            ),
+            },
+            cell: ({ row }) => {
+                const statusVal = row.original['status'] ?? '';
+                if (statusVal !== 'successful') {
+                    return <input type="checkbox" checked={row.getIsSelected()}
+                        onChange={row.getToggleSelectedHandler()} />
+                }
+            },
         }, {
             accessorKey: "ref_id", // Accessor key for the "name" field from data object
             header: "Ref ID", // Column header
@@ -62,6 +65,11 @@ const useMetrixModel = () => {
                 return <span style={{ color }}>{status}</span>;
             }
         }, {
+            accessorKey: "message_type",
+            header: "Message Type",
+            size: 100,
+            enableFilter: true,
+        }, {
             accessorKey: "primary_finder",
             header: "Primary Finder",
             size: 100
@@ -76,13 +84,18 @@ const useMetrixModel = () => {
         }, {
             accessorKey: "host_name",
             header: "Host Name",
-            size: 250
+            size: 150
         }, {
-            accessorKey: "message_type",
-            header: "Message Type",
-            size: 100,
-            enableFilter: true,
-        }
+            accessorKey: "actions", // Accessor key for the "name" field from data object
+            header: "", // Column header
+            size: 60,
+            cell: ({ row }) => {
+                const statusVal = row.original['status'] ?? '';
+                if (statusVal !== 'successful') {
+                    return <button className="action-btn">Resend</button>
+                }
+            }
+        },
     ], []
     );
 }

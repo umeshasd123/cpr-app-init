@@ -1,13 +1,13 @@
 .table-wrapper {
     overflow: auto;
-    min-height: 84vh;
+    height: 87vh;
+    margin: 10px 0;
 }
 
 .metrix-table {
     width: 100%;
     border-collapse: collapse;
-    margin: .5rem 0 0;
-    font-size: 14px;
+    margin: 0;
 }
 
 .metrix-table th:first-child,
@@ -44,12 +44,18 @@ td {
 .metrix-table .column-filter-wrap input,
 .metrix-table .column-filter-wrap select {
     width: calc(100% - 10px);
-    height: 18px;
+    height: 20px;
+    padding: 2px 5px;
+    font-size: 12px;
+}
+
+.metrix-table tbody tr:nth-child(even) {
+    background: #f9f9f9;
 }
 
 .global-search {
-    padding: 5px;
-    width: 250px
+    padding: 4px 5px;
+    width: 250px;
 }
 
 .metrix-table th.order-asc:before,
@@ -72,15 +78,30 @@ td {
     justify-content: space-between;
 }
 
-.table-top .act-btn {
+.table-top .act-btn,
+.table-top .reset-btn,
+.metrix-table .action-btn {
     background-color: #002984;
     cursor: pointer;
     color: #e8e8e8;
     border: 0;
     border-radius: 2px;
-    max-height: 29px;
+    height: 24px;
     line-height: 0;
-    padding: 2px 13px;
+    padding: 2px 9px;
+}
+
+.metrix-table .action-btn {
+    padding: 3px 6px;
+    font-size: 11px;
+    height: 19px;
+}
+
+.table-top .reset-btn {
+    background-color: #f0f0f0;
+    margin-left: 20px;
+    border: 1px solid #afafaf;
+    color: #272727;
 }
 
 .table-top .act-btn:hover {
@@ -90,4 +111,10 @@ td {
 
 .table-top .act-btn:disabled {
     opacity: .6;
+}
+
+.loader {
+    text-align: center;
+    margin-top: 100px;
+    font-size: 16px;
 }

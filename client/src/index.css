@@ -1,0 +1,40 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #272727;
+  font-size: 13px;
+}
+
+input,
+select {
+  border: 1px solid #868686;
+  border-radius: 3px;
+  padding: 4px 5px;
+  background: #f6fcfe;
+}
+
+input:focus,
+select:focus,
+button:focus,
+input:focus,
+a:active {
+  outline: none;
+}
+
+::placeholder {
+  color: #000;
+  opacity: .6; /* Firefox */
+}
+
+::-ms-input-placeholder { /* Edge 12 -18 */
+  color: #8f8f8f;
+}

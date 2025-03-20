@@ -1,5 +1,5 @@
 
-import { getCoreRowModel, flexRender, useReactTable, getFilteredRowModel, getSortedRowModel, getRow } from "@tanstack/react-table";
+import { getCoreRowModel, flexRender, useReactTable, getFilteredRowModel, getSortedRowModel } from "@tanstack/react-table";
 import React, { useState } from "react";
 
 export default function MetrixTable({ data, columns }) {
@@ -25,7 +25,11 @@ export default function MetrixTable({ data, columns }) {
     });
 
     const selectedRows = tableRef.getRowModel().rows.filter((row) => row.getIsSelected());
-    const resentAction = () => alert(selectedRows.map(i => i.original.ref_id).join(','));
+    const resendAction = () => alert(selectedRows.map(i => i.original.ref_id).join(','));
+    const resetFilters = () => {
+        console.log(tableRef);
+        return tableRef.resetColumnFilters()
+    }
 
     return (
         <div>
@@ -33,9 +37,11 @@ export default function MetrixTable({ data, columns }) {
                 <div className="search">
                     <input type="text" value={globalFilter} placeholder="Search..." className="global-search"
                         onChange={(e) => setGlobalFilter(e.target.value)} />
+                    <button className="reset-btn" type="button" onClick={resetFilters}>Reset Filter</button>
                 </div>
-                <button className="act-btn" type="button" onClick={resentAction} disabled={!selectedRows?.length}>Resend</button>
+                <button className="act-btn" type="button" onClick={resendAction} disabled={!selectedRows?.length}>Resend</button>
             </div>
+
             <div className="table-wrapper">
                 <table className="metrix-table">
                     <thead>
@@ -91,27 +97,24 @@ const ColFilter = ({ columnRef }) => {
     const header = columnRef;
     const filterType = header.column.columnDef.filterType;
     if (header.column.columnDef.enableFilter) {
+        let result;
         switch (filterType) {
             case 'select': {
                 const options = header.column.columnDef.filterOptions ?? [];
-                return (
-                    <select onChange={(e) => header.column.setFilterValue(e.target.value)}                        >
-                        <option value="">All</option>
-                        {options.map((optVal, i) => <option key={i} value={optVal}>{optVal.charAt(0).toUpperCase() + optVal.slice(1)}</option>)}
-                    </select>
-                )
-            }
+                result = <select onChange={(e) => header.column.setFilterValue(e.target.value)}                        >
+                    <option value="">All</option>
+                    {options.map((optVal, i) => <option key={i} value={optVal}>{optVal.charAt(0).toUpperCase() + optVal.slice(1)}</option>)}
+                </select>;
                 break;
+            }
 
             default:
-                return (
-                    <input type="text" placeholder={`Search ${header.column.columnDef.header}`}
-                        value={(header.column.getFilterValue()) ?? ""}
-                        onChange={(e) => header.column.setFilterValue(e.target.value)}
-                    />
-                )
-                break;
+                result = <input type="text" placeholder={`Search ${header.column.columnDef.header}`}
+                    value={(header.column.getFilterValue()) ?? ""}
+                    onChange={(e) => header.column.setFilterValue(e.target.value)}
+                />
         }
+        return result;
     } else {
         return null
     }
