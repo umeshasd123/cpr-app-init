@@ -7,7 +7,7 @@ const numberFilter = (row, columnId, filterValue) => {
     return rowValue !== undefined && rowValue.toString().includes(filterValue);
 };
 
-const useMetrixModel = () => {
+const useMetrixModel = (handleResend) => {
     return useMemo(() => [
         {
             id: 'select',
@@ -91,8 +91,9 @@ const useMetrixModel = () => {
             size: 60,
             cell: ({ row }) => {
                 const statusVal = row.original['status'] ?? '';
+                const refId = row.original['ref_id'];
                 if (statusVal !== 'successful') {
-                    return <button className="action-btn">Resend</button>
+                    return <button className="action-btn" onClick={() => handleResend(refId)}>Resend</button>
                 }
             }
         },

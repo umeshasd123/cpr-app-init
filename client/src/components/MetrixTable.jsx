@@ -2,7 +2,7 @@
 import { getCoreRowModel, flexRender, useReactTable, getFilteredRowModel, getSortedRowModel } from "@tanstack/react-table";
 import React, { useState } from "react";
 
-export default function MetrixTable({ data, columns }) {
+export default function MetrixTable({ data, columns, resendAction}) {
     const [globalFilter, setGlobalFilter] = useState("");
     const [sorting, setSorting] = useState([]);
     const [rowSelection, setRowSelection] = useState({});
@@ -25,10 +25,12 @@ export default function MetrixTable({ data, columns }) {
     });
 
     const selectedRows = tableRef.getRowModel().rows.filter((row) => row.getIsSelected());
-    const resendAction = () => alert(selectedRows.map(i => i.original.ref_id).join(','));
     const resetFilters = () => {
-        console.log(tableRef);
         return tableRef.resetColumnFilters()
+    }
+    function resendHandle(){
+        const selectedIds = selectedRows.map(i => i.original.ref_id);
+        resendAction(selectedIds)
     }
 
     return (
@@ -39,7 +41,7 @@ export default function MetrixTable({ data, columns }) {
                         onChange={(e) => setGlobalFilter(e.target.value)} />
                     <button className="reset-btn" type="button" onClick={resetFilters}>Reset Filter</button>
                 </div>
-                <button className="act-btn" type="button" onClick={resendAction} disabled={!selectedRows?.length}>Resend</button>
+                <button className="act-btn" type="button" onClick={resendHandle} disabled={!selectedRows?.length}>Resend</button>
             </div>
 
             <div className="table-wrapper">
