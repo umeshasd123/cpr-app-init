@@ -7,24 +7,34 @@ const numberFilter = (row, columnId, filterValue) => {
     return rowValue !== undefined && rowValue.toString().includes(filterValue);
 };
 
-const useMetrixModel = (handleResend) => {
+const useMetrixModel = (handleResend, expandRowEvent) => {
     return useMemo(() => [
+        {
+            id: 'expander',
+            header: () => null,
+            cell: ({ row }) =>
+                row.getCanExpand() ? (
+                    <button onClick={() => { row.getToggleExpandedHandler(); expandRowEvent(row) }}>
+                        {row.getIsExpanded() ? '▼' : '▶'}
+                    </button>
+                ) : null,
+            size: 20
+        },
         {
             id: 'select',
             size: 20,
             header: ({ table }) => {
                 const selectableRows = table.getRowModel().rows.filter(
-                    (row) => row.original.status !== "successful"
+                    (row) => row.original.status === "failed"
                 );
                 const allSelected = selectableRows.every((row) => row.getIsSelected());
                 return <input type="checkbox" checked={allSelected} onChange={(e) => {
                     selectableRows.forEach((row) => row.toggleSelected(e.target.checked));
-                }}
-                />
+                }} />
             },
             cell: ({ row }) => {
                 const statusVal = row.original['status'] ?? '';
-                if (statusVal !== 'successful') {
+                if (statusVal === 'failed') {
                     return <input type="checkbox" checked={row.getIsSelected()}
                         onChange={row.getToggleSelectedHandler()} />
                 }
@@ -58,10 +68,10 @@ const useMetrixModel = (handleResend) => {
             header: "Status",
             enableFilter: true,
             filterType: 'select',
-            filterOptions: ['initiated', 'successful', 'failed'],
+            filterOptions: ['initiated', 'successful', 'failed', 'error', 'retry'],
             cell: ({ getValue }) => {
                 const status = getValue();
-                const color = status === 'failed' ? 'red' : status === 'successful' ? 'green' : '#cf5700';
+                const color = { failed: 'red', error: 'red', successful: 'green' }[status] || '#cf5700';
                 return <span style={{ color }}>{status}</span>;
             }
         }, {
@@ -91,9 +101,8 @@ const useMetrixModel = (handleResend) => {
             size: 60,
             cell: ({ row }) => {
                 const statusVal = row.original['status'] ?? '';
-                const refId = row.original['ref_id'];
-                if (statusVal !== 'successful') {
-                    return <button className="action-btn" onClick={() => handleResend(refId)}>Resend</button>
+                if (statusVal === 'failed') {
+                    return <button className="action-btn" onClick={() => handleResend(row)}>Retry</button>
                 }
             }
         },

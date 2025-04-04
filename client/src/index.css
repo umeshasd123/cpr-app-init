@@ -10,7 +10,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #272727;
+  color: #212121;
   font-size: 13px;
 }
 
@@ -37,4 +37,8 @@ a:active {
 
 ::-ms-input-placeholder { /* Edge 12 -18 */
   color: #8f8f8f;
+}
+button{
+  cursor: pointer;
+  border-radius: 2px;
 }
