@@ -2,10 +2,11 @@
 import { getCoreRowModel, flexRender, useReactTable, getFilteredRowModel, getSortedRowModel, getExpandedRowModel } from "@tanstack/react-table";
 import React, { useCallback, useMemo, useState } from "react";
 
-export default function MetrixTable({ data, columns, resendAction, fetchData, params, setParams }) {
+export default function MetrixTable({ data, columns, resendAction, fetchData, params, setParams, expandedData, onRowExpand }) {
     const [sorting, setSorting] = useState([]);
     const [rowSelection, setRowSelection] = useState({});
     const [expanded, setExpanded] = useState({});
+    const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
 
     const totalPages = Math.ceil(params.total / params.limit);
 
@@ -34,27 +35,35 @@ export default function MetrixTable({ data, columns, resendAction, fetchData, pa
         getSubRows: row => row.subRows || []
     });
 
-
+    /* It collects the selected rows */
     const selectedRows = tableRef.getRowModel().rows.filter((row) => row.getIsSelected());
-    const resetFilters = () => {
-        return tableRef.resetColumnFilters()
-    }
+
+    // const resetFilters = () => {
+    //     return tableRef.resetColumnFilters()
+    // }
+
+    /* This function collects the selected rows and calls the resendAction function with their IDs */
     function resendHandle() {
         const selectedIds = selectedRows.map(i => i.original.ref_id);
         resendAction(selectedIds)
     }
 
+    /* Handle search action
+     It updates the search parameters and fetches data if on the first page*/
     const handleSearch = () => {
         setParams(prev => ({ ...prev, page: 1 }))// Reset to the first page
         if (params.page === 1) {
             fetchData(); // Fetch data only if on the first page            
         }
+        setShowAdvancedSearch(false); // Hide the advanced search dropdown after search
     };
 
-    const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
-    const resetAdvancedFilter = () => setParams(prev => ({
-        ...prev, status: '', type: '', fromDate: '', toDate: ''
-    }));
+
+    /* This function resets the advanced filter parameters to their initial state  */
+    const resetAdvancedFilter = () => {
+        setParams(prev => ({ ...prev, status: '', type: '', fromDate: '', toDate: '' }));
+        setShowAdvancedSearch(false); // Hide the advanced search dropdown after reset
+    };
 
     return (
         <div>
@@ -143,21 +152,31 @@ export default function MetrixTable({ data, columns, resendAction, fetchData, pa
                         {tableRef.getRowModel().rows.map((row) => (
                             <React.Fragment key={row.id}>
                                 <tr>
-                                    {row.getVisibleCells().map((cell) => (
-                                        <td key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
+                                    {row.getVisibleCells().map((cell, i) => (
+                                        <td key={i}>
+                                            {cell.column.id === 'expander' ?
+                                                <button
+                                                    className={`expand-btn ${row.getIsExpanded() ? 'expanded' : ''}`}
+                                                    onClick={() => {
+                                                        row.toggleExpanded();
+                                                        if (!row.getIsExpanded()) {
+                                                            onRowExpand(row.original.ref_id)
+                                                        }
+                                                    }}>
+                                                    {row.getIsExpanded() ? '-' : '+'}
+                                                </button> : flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext()
+                                                )}
                                         </td>
                                     ))}
                                 </tr>
                                 {row.getIsExpanded() && (
                                     <tr>
                                         <td colSpan={tableRef.getVisibleFlatColumns().length}>
-                                            <div style={{ padding: '10px', background: '#f5f5f5' }}>
-                                                <strong>Expanded Row Content:</strong>
-                                                
+                                            <div className="expanded-area">
+                                                <strong>Searchable Domains</strong>
+                                                <p style={{ margin: '3px 0 0' }}>{expandedData[row.original.ref_id] || 'Loading...'}</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -184,6 +203,8 @@ export default function MetrixTable({ data, columns, resendAction, fetchData, pa
     );
 }
 
+/* This function handles the column filter for the table. It checks if the column has a filter 
+enabled and renders the appropriate filter input based on the filter type. */
 const ColFilter = ({ columnRef }) => {
     const header = columnRef;
     const filterType = header.column.columnDef.filterType;
@@ -212,6 +233,7 @@ const ColFilter = ({ columnRef }) => {
 
 }
 
+/* Pagination component to handle page navigation and display */
 const Pagination = ({ page, setParams, totalPages }) => {
     const MAX_PAGE_DISPLAY = 12;
     const createPageArray = useCallback(() => {

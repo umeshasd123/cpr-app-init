@@ -13,10 +13,17 @@
 }
 
 .metrix-table th:first-child,
-.metrix-table td:first-child {
+.metrix-table td:first-child,
+.metrix-table th:nth-child(2),
+.metrix-table td:nth-child(2) {
     position: sticky;
     left: -1px;
     z-index: 1
+}
+.metrix-table th:nth-child(2),
+.metrix-table td:nth-child(2) {
+    left: 20px;
+    
 }
 
 .metrix-table thead tr:first-child th {
@@ -251,4 +258,29 @@ td {
     position: relative;
     top: -3px;
 }
-
+.expand-btn{
+    border: 0;
+    background-color: #d2e0ff;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    color: #4f6cac;
+    padding: 0;
+    font-size: 13px;
+    text-align: center;
+    line-height: 0;
+}
+.expand-btn.expanded{
+    font-size: 15px;
+    vertical-align: text-top;
+}
+.expand-btn:hover{
+    background-color: #7da5ff;
+    color: #fff;
+}
+.expanded-area{
+    padding: 15px;
+    background: #fff;
+    margin: -3px -5px;
+    box-shadow: inset 0px -1px 4px 0px rgb(0 0 0 / 11%);
+}

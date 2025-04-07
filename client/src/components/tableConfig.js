@@ -7,18 +7,12 @@ const numberFilter = (row, columnId, filterValue) => {
     return rowValue !== undefined && rowValue.toString().includes(filterValue);
 };
 
-const useMetrixModel = (handleResend, expandRowEvent) => {
+const useMetrixModel = (handleResend) => {
     return useMemo(() => [
         {
-            id: 'expander',
-            header: () => null,
-            cell: ({ row }) =>
-                row.getCanExpand() ? (
-                    <button onClick={() => { row.getToggleExpandedHandler(); expandRowEvent(row) }}>
-                        {row.getIsExpanded() ? '▼' : '▶'}
-                    </button>
-                ) : null,
-            size: 20
+            id: 'expander', // Use an expander column
+            header:'',
+            size: 20,
         },
         {
             id: 'select',
@@ -106,8 +100,7 @@ const useMetrixModel = (handleResend, expandRowEvent) => {
                 }
             }
         },
-    ], []
-    );
+    ], [handleResend]);
 }
 
 export default useMetrixModel;

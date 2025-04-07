@@ -12,11 +12,11 @@ export default function TableContent() {
         limit: 20, //The number of items per page.
         total: 0 //The total number of records available.
     });
+    const [expandedData, setExpandedData] = useState({});
+    
+    const columns = useMetrixModel(handleResend);
 
-    useEffect(() => {
-        fetchData();
-    }, [searchParams.page, searchParams.limit]);
-
+    // This function is called to fetch data from the server.
     const fetchData = async () => {
         setLoading(true);
         const params = new URLSearchParams({ ...searchParams });
@@ -34,12 +34,29 @@ export default function TableContent() {
             .catch((error) => console.error("Error fetching data:", error));
     };
 
-    const columns = useMetrixModel(handleResend);
+    useEffect(() => {
+        fetchData();
+    }, [searchParams.page, searchParams.limit]);
 
-
-    //preloader
+     // This is loading state that shows a message while data is being fetched.
     if (isLoading) {
         return <p className="loader">Please wait. Data loading....</p>
+    }
+
+    // This function is called when a row is expanded to fetch additional data for that row.
+    const handleRowExpand = async (refId) => {
+        if (expandedData[refId]) return;
+        try {
+            const response = await fetch(`http://localhost:5000/api/getattributes?refId=${refId}`);
+            const ref_id_obj = await response.json();
+            
+            if (response.ok) {
+                console.log(expandedData);
+                setExpandedData(prev => ({ ...prev, [refId]: JSON.stringify(ref_id_obj) }));
+            }
+        } catch (error) {
+            console.error("Request failed:", error);
+        }
     }
 
     return <MetrixTable
@@ -48,15 +65,19 @@ export default function TableContent() {
         resendAction={resendAction}
         fetchData={fetchData}
         params={searchParams}
-        setParams={setParams} />;
+        setParams={setParams}
+        expandedData={expandedData}
+        onRowExpand={handleRowExpand} />;
 }
 
 
-function handleResend(rowData) {    
+function handleResend(rowData) {
     const refId = rowData.original['ref_id'];
     resendAction([refId])
 }
 
+/* Function to handle resend action
+ This function sends a POST request to the server with the selected IDs.*/
 async function resendAction(selectedIds) {
     console.log(selectedIds);
     if (Array.isArray(selectedIds) && selectedIds.length > 0) {

@@ -96,6 +96,20 @@ app.post("/api/resend", (req, res) => {
     res.json({ message: `Ref ids [${refIds.join(', ')}] processed successfully` });
 });
 
+// Endpoint to get searchable attributes
+app.get("/api/getattributes", (req, res) => {    
+    if (!mockData) {
+        return res.status(500).json({ error: "Invalid JSON format" });
+    }
+    const findAttr = mockData.find(item => item["ref_id"] === Number(req.query.refId));
+
+    // Send response
+    
+    setTimeout(() => {
+        res.json(findAttr);
+    }, 1000);
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
