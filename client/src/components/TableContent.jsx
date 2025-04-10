@@ -49,10 +49,19 @@ export default function TableContent() {
         try {
             const response = await fetch(`http://localhost:5000/api/getattributes?refId=${refId}`);
             const ref_id_obj = await response.json();
-            
+            const tempRefObj = [
+                {
+                    SEARCH_ID:Math.floor(Math.random() * 10000),
+                    UNIQUE_IDENTIFIER:'23423ertv45'+Math.floor(Math.random() * 10000),
+                    ITEM_NAME:'ew34 b43twet',
+                    ITEM_VALUE:'dfgdfg',
+                    PRIMARY_TYPE:'',
+                    ITEM_ORDER:'',
+                    INSERTION_TIME:new Date(new Date() + Math.floor(Math.random() * 86400000))
+                }
+            ];
             if (response.ok) {
-                console.log(expandedData);
-                setExpandedData(prev => ({ ...prev, [refId]: JSON.stringify(ref_id_obj) }));
+                setExpandedData(prev => ({ ...prev, [refId]: tempRefObj }));
             }
         } catch (error) {
             console.error("Request failed:", error);

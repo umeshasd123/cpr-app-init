@@ -1,6 +1,7 @@
 
 import { getCoreRowModel, flexRender, useReactTable, getFilteredRowModel, getSortedRowModel, getExpandedRowModel } from "@tanstack/react-table";
 import React, { useCallback, useMemo, useState } from "react";
+import SearchableDomainsTable from "./SearchableDomainsTable";
 
 export default function MetrixTable({ data, columns, resendAction, fetchData, params, setParams, expandedData, onRowExpand }) {
     const [sorting, setSorting] = useState([]);
@@ -11,6 +12,7 @@ export default function MetrixTable({ data, columns, resendAction, fetchData, pa
     const totalPages = Math.ceil(params.total / params.limit);
 
     const pageLimitArray = [20, 30, 50, 80, 100];
+    let searchParams = {};
 
     // Initialize the table instance with data, columns, and row model
     const tableRef = useReactTable({
@@ -56,6 +58,7 @@ export default function MetrixTable({ data, columns, resendAction, fetchData, pa
             fetchData(); // Fetch data only if on the first page            
         }
         setShowAdvancedSearch(false); // Hide the advanced search dropdown after search
+        searchParams = params;
     };
 
 
@@ -84,6 +87,7 @@ export default function MetrixTable({ data, columns, resendAction, fetchData, pa
                                         <option value="successful">successful</option>
                                         <option value="error">error</option>
                                         <option value="retry">retry</option>
+                                        <option value="transformation">Transformation</option>
                                     </select>
                                 </div>
                                 <div className="filter-group">
@@ -97,11 +101,15 @@ export default function MetrixTable({ data, columns, resendAction, fetchData, pa
                                 <div className="filter-group-wrap">
                                     <div className="filter-group">
                                         <label className="filter-label">Date From</label>
-                                        <input type="date" id="from-date" onChange={(e) => setParams(prev => ({ ...prev, fromDate: e.target.value }))} value={params?.fromDate} />
+                                        <input type="date" id="from-date"
+                                            onChange={(e) => setParams(prev => ({ ...prev, fromDate: e.target.value }))} value={params?.fromDate}
+                                            max={params.toDate || ""} />
                                     </div>
                                     <div className="filter-group">
                                         <label htmlFor="to-date">To </label>
-                                        <input type="date" id="to-date" onChange={(e) => setParams(prev => ({ ...prev, toDate: e.target.value }))} value={params?.toDate} />
+                                        <input type="date" id="to-date"
+                                            onChange={(e) => setParams(prev => ({ ...prev, toDate: e.target.value }))} value={params?.toDate}
+                                            min={params.fromDate || ""} />
                                     </div>
                                 </div>
                                 <div className="button-group">
@@ -113,6 +121,15 @@ export default function MetrixTable({ data, columns, resendAction, fetchData, pa
                     </div>
                     <button className="reset-btn" type="button" onClick={handleSearch}>Search</button>
                     {/* <button className="reset-btn" type="button" onClick={resetFilters}>Reset Filter</button> */}
+                </div>
+                <div className="tags">
+                    {console.log(searchParams)}
+                    {Object.entries(params)?.map(([key, value]) => {
+                        if (!['page', 'limit', 'total', 'search'].includes(key) && params[key] !== '') {
+                            return (<span key={key}>{key + ': ' + value}</span>)
+                        }
+                    })
+                    }
                 </div>
 
                 <button className="act-btn" type="button" onClick={resendHandle} disabled={!selectedRows?.length}>Retry</button>
@@ -137,13 +154,13 @@ export default function MetrixTable({ data, columns, resendAction, fetchData, pa
                                         </th>
                                     ))}
                                 </tr>
-                                <tr className="column-filter-wrap">
+                                {/* <tr className="column-filter-wrap">
                                     {headerGroup.headers.map((header) => (
                                         <td colSpan={header.colSpan} key={header.id}>
                                             <ColFilter columnRef={header} />
                                         </td>
                                     ))}
-                                </tr>
+                                </tr> */}
                             </React.Fragment>
                         ))}
                     </thead>
@@ -176,7 +193,7 @@ export default function MetrixTable({ data, columns, resendAction, fetchData, pa
                                         <td colSpan={tableRef.getVisibleFlatColumns().length}>
                                             <div className="expanded-area">
                                                 <strong>Searchable Domains</strong>
-                                                <p style={{ margin: '3px 0 0' }}>{expandedData[row.original.ref_id] || 'Loading...'}</p>
+                                                <SearchableDomainsTable data={expandedData[row.original.ref_id]}/>
                                             </div>
                                         </td>
                                     </tr>

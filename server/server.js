@@ -28,30 +28,33 @@ app.get('/metrix-data', (req, res) => {
         return res.status(500).json({ error: "Invalid JSON format" });
     }
 
-    let { 
-        page = 1, 
-        limit = 50, 
-        search = '', 
-        status = "", 
-        fromDate = null, 
+    let {
+        page = 1,
+        limit = 20,
+        search = '',
+        status = "",
+        fromDate = null,
         toDate = null,
         type = ""
     } = req.query;
     page = parseInt(page);
     limit = parseInt(limit);
-    
+
     let filteredData = mockData;
+    const dateOnly = date => new Date(date.getFullYear(), date.getMonth(), date.getDate());
     if (status) {
-        filteredData = filteredData.filter(row => row.status === status);
+        filteredData = filteredData.filter(row => row.status.toLowerCase() === status.toLowerCase());
     }
-    if (fromDate) {
-        filteredData = filteredData.filter(row => new Date(row.creationdate) >= new Date(fromDate));
+    if (fromDate) {        
+        filteredData = filteredData.filter(row => {
+           return dateOnly(new Date(row.creationdate)) >= dateOnly(new Date(fromDate)) 
+        });
     }
     if (toDate) {
-        filteredData = filteredData.filter(row => new Date(row.creationdate) <= new Date(toDate));
+        filteredData = filteredData.filter(row => dateOnly(new Date(row.creationdate)) <= dateOnly(new Date(toDate)));
     }
     if (type) {
-        filteredData = filteredData.filter(row => row.type === type);        
+        filteredData = filteredData.filter(row => row.type === type);
     }
     if (search) {
         const lowerSearch = search.toLowerCase();
@@ -61,31 +64,31 @@ app.get('/metrix-data', (req, res) => {
     }
     const total = filteredData.length;
     const paginatedData = filteredData.slice((page - 1) * limit, page * limit);
-    
+
     res.json({ total, data: paginatedData });
 
-/*
-    const filePath = path.join(__dirname, "mockData.json");
-    fs.readFile(filePath, "utf8", (err, data) => {
-        if (err) {
-            console.error("Error reading file:", err);
-            return res.status(500).json({ error: "Failed to read data" });
-        }
-
-        try {
-            const logs = JSON.parse(data);
-            res.json(logs);
-        } catch (parseError) {
-            console.error("Error parsing JSON:", parseError);
-            res.status(500).json({ error: "Invalid JSON format" });
-        }
-    });
-    */
+    /*
+        const filePath = path.join(__dirname, "mockData.json");
+        fs.readFile(filePath, "utf8", (err, data) => {
+            if (err) {
+                console.error("Error reading file:", err);
+                return res.status(500).json({ error: "Failed to read data" });
+            }
+    
+            try {
+                const logs = JSON.parse(data);
+                res.json(logs);
+            } catch (parseError) {
+                console.error("Error parsing JSON:", parseError);
+                res.status(500).json({ error: "Invalid JSON format" });
+            }
+        });
+        */
 })
 
 // Endpoint to process Ref.Ids
 app.post("/api/resend", (req, res) => {
-    const refIds  = req.body;
+    const refIds = req.body;
 
     // Validate input
     if (!Array.isArray(refIds) || refIds.length === 0) {
@@ -97,14 +100,14 @@ app.post("/api/resend", (req, res) => {
 });
 
 // Endpoint to get searchable attributes
-app.get("/api/getattributes", (req, res) => {    
+app.get("/api/getattributes", (req, res) => {
     if (!mockData) {
         return res.status(500).json({ error: "Invalid JSON format" });
     }
     const findAttr = mockData.find(item => item["ref_id"] === Number(req.query.refId));
 
     // Send response
-    
+
     setTimeout(() => {
         res.json(findAttr);
     }, 1000);

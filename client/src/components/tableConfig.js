@@ -62,7 +62,7 @@ const useMetrixModel = (handleResend) => {
             header: "Status",
             enableFilter: true,
             filterType: 'select',
-            filterOptions: ['initiated', 'successful', 'failed', 'error', 'retry'],
+            filterOptions: ['initiated', 'successful', 'failed', 'error', 'retry', 'transformation'],
             cell: ({ getValue }) => {
                 const status = getValue();
                 const color = { failed: 'red', error: 'red', successful: 'green' }[status] || '#cf5700';
