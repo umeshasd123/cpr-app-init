@@ -2,7 +2,7 @@ version: "1"
 
 services:
   client:
-    image: umesh/cpr-app
+    image: umeshdib123/cpr-client
     container_name: cpr-client-container
     build:
       context: ./client
@@ -20,7 +20,7 @@ services:
       - server
 
   server:
-    image: umesh/cpr-server
+    image: umeshdib123/cpr-server
     container_name: cpr-server-container
     build:
       context: ./server

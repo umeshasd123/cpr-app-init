@@ -12,13 +12,23 @@
     font-size: 12px;
 }
 
+.metrix-table thead tr {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    left: 0;
+}
+
 .metrix-table th:first-child,
 .metrix-table td:first-child,
 .metrix-table th:nth-child(2),
 .metrix-table td:nth-child(2) {
     position: sticky;
-    left: 0px;
+    left: -1px;
     z-index: 1
+}
+.metrix-table th:nth-child(2){
+    top: 0;
 }
 
 .metrix-table th:nth-child(2),

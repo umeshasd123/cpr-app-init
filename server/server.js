@@ -1,127 +1,60 @@
+const http = require('http');
 const express = require("express");
-const fs = require("fs");
-const cors = require("cors");
-require("dotenv").config();
+const app = require("./app.js");
+const debug = require('debug')('nodejs-express:server');
 
-const app = express();
-app.use(express.json());
-app.use(cors());
-
-// The port number on which the server will listen for incoming requests.
-const PORT = process.env.PORT || 5000;
-
-app.get("/", (req, res) => {
-    res.send("Backend is running!");
-});
-
-// Load mock data
-let mockData;
-try {
-    mockData = JSON.parse(fs.readFileSync('MockData.json', 'utf-8'));
-} catch (error) {
-    console.error("Error reading MockData.json:", error);
-    mockData = null;
+const normalizePort = (val) => {
+    const port = parseInt(val, 10);
+    if (isNaN(port)) {
+        return val;
+    }
+    if (port >= 0) {
+        return port;
+    }
+    return false;
 }
 
-app.get('/metrix-data', (req, res) => {
-    if (!mockData) {
-        return res.status(500).json({ error: "Invalid JSON format" });
+// Error handling for the server
+const onError = (error) => {
+    if (error.syscall !== 'listen') {
+        throw error;
     }
-
-    let {
-        page = 1,
-        limit = 20,
-        search = '',
-        status = "",
-        fromDate = null,
-        toDate = null,
-        type = ""
-    } = req.query;
-    page = parseInt(page);
-    limit = parseInt(limit);
-
-    let filteredData = mockData;
-    const dateOnly = date => new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    if (status) {
-        filteredData = filteredData.filter(row => row.status.toLowerCase() === status.toLowerCase());
+    const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+    switch (error.code) {
+        case 'EACCES':
+            console.error(bind + ' requires elevated privileges');
+            process.exit(1);
+            break;
+        case 'EADDRINUSE':
+            console.error(bind + ' is already in use');
+            process.exit(1);
+            break;
+        default:
+            throw error;
     }
-    if (fromDate) {        
-        filteredData = filteredData.filter(row => {
-           return dateOnly(new Date(row.creationdate)) >= dateOnly(new Date(fromDate)) 
-        });
-    }
-    if (toDate) {
-        filteredData = filteredData.filter(row => dateOnly(new Date(row.creationdate)) <= dateOnly(new Date(toDate)));
-    }
-    if (type) {
-        filteredData = filteredData.filter(row => row.type === type);
-    }
-    if (search) {
-        const lowerSearch = search.toLowerCase();
-        filteredData = filteredData.filter(row =>
-            Object.values(row).some(value => String(value).toLowerCase().includes(lowerSearch))
-        );
-    }
-    const total = filteredData.length;
-    const paginatedData = filteredData.slice((page - 1) * limit, page * limit);
+}
 
-    res.json({ total, data: paginatedData });
+// The server will listen on the specified port.
+const onListening = () => {
+    const addr = server.address();
+    const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+    debug('Listening on ' + bind);
+}
 
-    /*
-        const filePath = path.join(__dirname, "mockData.json");
-        fs.readFile(filePath, "utf8", (err, data) => {
-            if (err) {
-                console.error("Error reading file:", err);
-                return res.status(500).json({ error: "Failed to read data" });
-            }
-    
-            try {
-                const logs = JSON.parse(data);
-                res.json(logs);
-            } catch (parseError) {
-                console.error("Error parsing JSON:", parseError);
-                res.status(500).json({ error: "Invalid JSON format" });
-            }
-        });
-        */
-})
-
-// Endpoint to process Ref.Ids
-app.post("/api/resend", (req, res) => {
-    const refIds = req.body;
-
-    // Validate input
-    if (!Array.isArray(refIds) || refIds.length === 0) {
-        return res.status(500).json({ error: "Invalid request: refIds must be a non-empty array" });
-    }
-
-    // Send response
-    res.json({ message: `Ref ids [${refIds.join(', ')}] processed successfully` });
-});
-
-// Endpoint to get searchable attributes
-app.get("/api/getattributes", (req, res) => {
-    if (!mockData) {
-        return res.status(500).json({ error: "Invalid JSON format" });
-    }
-    const findAttr = mockData.find(item => item["ref_id"] === Number(req.query.refId));
-
-    // Send response
-
-    setTimeout(() => {
-        res.json(findAttr);
-    }, 1000);
-});
-
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
-
+// The port number on which the server will listen for incoming requests.
+const PORT = normalizePort(process.env.PORT || 5000);
 
 const path = require("path");
+
 // Serve frontend build
 app.use(express.static(path.join(__dirname, "../client/build")));
 
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "../client/build", "index.html"));
 });
+
+app.set('port', PORT);
+const server = http.createServer(app)
+server.on('error', onError);
+server.on('listening', onListening);
+app.listen(PORT);

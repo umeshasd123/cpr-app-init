@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import MetrixTable from "./MetrixTable";
 import '../assets/styles/TableContent.css';
 import useMetrixModel from "./tableConfig";
+import config from "../utils/config";
+const apiUrl = config.apiUrl;
 
 export default function TableContent() {
     const [tableData, setTableData] = useState([]);
@@ -20,7 +22,7 @@ export default function TableContent() {
     const fetchData = async () => {
         setLoading(true);
         const params = new URLSearchParams({ ...searchParams });
-        fetch(`http://localhost:5000/metrix-data?${params}`)
+        fetch(`${apiUrl}/metrix-data?${params}`)
             .then((response) => response.json())
             .then((data) => {
                 if (data && data !== '') {
@@ -47,21 +49,10 @@ export default function TableContent() {
     const handleRowExpand = async (refId) => {
         if (expandedData[refId]) return;
         try {
-            const response = await fetch(`http://localhost:5000/api/getattributes?refId=${refId}`);
+            const response = await fetch(`${apiUrl}/getattributes?refId=${refId}`);
             const ref_id_obj = await response.json();
-            const tempRefObj = [
-                {
-                    SEARCH_ID:Math.floor(Math.random() * 10000),
-                    UNIQUE_IDENTIFIER:'23423ertv45'+Math.floor(Math.random() * 10000),
-                    ITEM_NAME:'ew34 b43twet',
-                    ITEM_VALUE:'dfgdfg',
-                    PRIMARY_TYPE:'',
-                    ITEM_ORDER:'',
-                    INSERTION_TIME:new Date(new Date() + Math.floor(Math.random() * 86400000))
-                }
-            ];
             if (response.ok) {
-                setExpandedData(prev => ({ ...prev, [refId]: tempRefObj }));
+                setExpandedData(prev => ({ ...prev, [refId]: ref_id_obj }));
             }
         } catch (error) {
             console.error("Request failed:", error);
@@ -91,7 +82,7 @@ async function resendAction(selectedIds) {
     console.log(selectedIds);
     if (Array.isArray(selectedIds) && selectedIds.length > 0) {
         try {
-            const response = await fetch("http://localhost:5000/api/resend", {
+            const response = await fetch(`${apiUrl}/resend`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

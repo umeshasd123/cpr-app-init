@@ -8,11 +8,11 @@ export default function MetrixTable({ data, columns, resendAction, fetchData, pa
     const [rowSelection, setRowSelection] = useState({});
     const [expanded, setExpanded] = useState({});
     const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+    const [searchParams, setSearchParams] = useState(params);
 
     const totalPages = Math.ceil(params.total / params.limit);
 
     const pageLimitArray = [20, 30, 50, 80, 100];
-    let searchParams = {};
 
     // Initialize the table instance with data, columns, and row model
     const tableRef = useReactTable({
@@ -58,15 +58,13 @@ export default function MetrixTable({ data, columns, resendAction, fetchData, pa
             fetchData(); // Fetch data only if on the first page            
         }
         setShowAdvancedSearch(false); // Hide the advanced search dropdown after search
-        searchParams = params;
+        setSearchParams(params);
     };
-
 
     /* This function resets the advanced filter parameters to their initial state  */
     const resetAdvancedFilter = () => {
         setParams(prev => ({ ...prev, status: '', type: '', fromDate: '', toDate: '' }));
-        setShowAdvancedSearch(false); // Hide the advanced search dropdown after reset
-    };
+    }
 
     return (
         <div>
@@ -102,13 +100,13 @@ export default function MetrixTable({ data, columns, resendAction, fetchData, pa
                                     <div className="filter-group">
                                         <label className="filter-label">Date From</label>
                                         <input type="date" id="from-date"
-                                            onChange={(e) => setParams(prev => ({ ...prev, fromDate: e.target.value }))} value={params?.fromDate}
+                                            onChange={(e) => setParams(prev => ({ ...prev, fromDate: e.target.value }))} value={params?.fromDate || ""}
                                             max={params.toDate || ""} />
                                     </div>
                                     <div className="filter-group">
                                         <label htmlFor="to-date">To </label>
                                         <input type="date" id="to-date"
-                                            onChange={(e) => setParams(prev => ({ ...prev, toDate: e.target.value }))} value={params?.toDate}
+                                            onChange={(e) => setParams(prev => ({ ...prev, toDate: e.target.value }))} value={params?.toDate || ""}
                                             min={params.fromDate || ""} />
                                     </div>
                                 </div>
@@ -123,20 +121,19 @@ export default function MetrixTable({ data, columns, resendAction, fetchData, pa
                     {/* <button className="reset-btn" type="button" onClick={resetFilters}>Reset Filter</button> */}
                 </div>
                 <div className="tags">
-                    {console.log(searchParams)}
-                    {Object.entries(params)?.map(([key, value]) => {
-                        if (!['page', 'limit', 'total', 'search'].includes(key) && params[key] !== '') {
-                            return (<span key={key}>{key + ': ' + value}</span>)
+                    {Object.entries(searchParams)?.map(([key, value]) => {
+                        if (!['page', 'limit', 'total', 'search'].includes(key) && searchParams[key] !== '') {
+                            return (<span key={key}>{key + ': ' + value}</span>);
                         }
-                    })
-                    }
+                        return null;
+                    })}
                 </div>
 
                 <button className="act-btn" type="button" onClick={resendHandle} disabled={!selectedRows?.length}>Retry</button>
             </div>
 
             <div className="table-wrapper">
-                <table className="metrix-table">
+                <table className="metrix-table" cellPadding='0' cellSpacing='0'>
                     <thead>
                         {tableRef.getHeaderGroups().map((headerGroup) => (
                             <React.Fragment key={headerGroup.id}>

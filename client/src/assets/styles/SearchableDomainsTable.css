@@ -1,0 +1,10 @@
+
+.expanded-table{
+    margin-top: 5px;
+}
+.expanded-table table {
+    min-width: 94vw;
+}
+.expanded-table table thead th{
+    font-weight: 100;
+}
