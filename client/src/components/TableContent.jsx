@@ -7,6 +7,8 @@ const apiUrl = config.apiUrl;
 
 export default function TableContent() {
     const [tableData, setTableData] = useState([]);
+    console.log(tableData);
+    
     const [isLoading, setLoading] = useState(true);
     const [searchParams, setParams] = useState({
         search: '', //The search query string.

@@ -16,7 +16,7 @@ const useMetrixModel = (handleResend) => {
         },
         {
             id: 'select',
-            size: 20,
+            size: 10,
             header: ({ table }) => {
                 const selectableRows = table.getRowModel().rows.filter(
                     (row) => row.original.status === "failed"
@@ -34,31 +34,31 @@ const useMetrixModel = (handleResend) => {
                 }
             },
         }, {
-            accessorKey: "ref_id", // Accessor key for the "name" field from data object
+            accessorKey: "REF_ID", // Accessor key for the "name" field from data object
             header: "Ref ID", // Column header
             enableFilter: true,
             size: 80,
             filterFn: numberFilter
         }, {
-            accessorKey: "description",
+            accessorKey: "DESCRIPTION",
             header: "Description",
             enableFilter: true,
             size: 250
         }, {
-            accessorKey: "event_id",
+            accessorKey: "EVENT_ID",
             header: "Event ID",
             size: 70
         }, {
-            accessorKey: "creationdate",
+            accessorKey: "CREATIONDATE",
             header: "Creation Date",
             size: 100
         }, {
-            accessorKey: "source_name",
+            accessorKey: "SOURCE_NAME",
             header: "Source Name",
             size: 200,
             enableFilter: true,
         }, {
-            accessorKey: "status",
+            accessorKey: "STATUS",
             header: "Status",
             enableFilter: true,
             filterType: 'select',
@@ -69,24 +69,24 @@ const useMetrixModel = (handleResend) => {
                 return <span style={{ color }}>{status}</span>;
             }
         }, {
-            accessorKey: "message_type",
+            accessorKey: "MESSAGE_TYPE",
             header: "Message Type",
             size: 100,
             enableFilter: true,
         }, {
-            accessorKey: "primary_finder",
+            accessorKey: "PRIMARY_FINDER",
             header: "Primary Finder",
             size: 100
         }, {
-            accessorKey: "secondary_finder",
+            accessorKey: "SECONDARY_FINDER",
             header: "Secondary Finder",
             size: 100
         }, {
-            accessorKey: "tertiory_finder",
+            accessorKey: "TERTIORY_FINDER",
             header: "Tertiory Finder",
             size: 100
         }, {
-            accessorKey: "host_name",
+            accessorKey: "HOST_NAME",
             header: "Host Name",
             size: 150
         }, {
