@@ -27,13 +27,27 @@ router.get('', async (req, res) => {
     const offset = (page - 1) * limit;
     const conditions = [];
     const binds = {};
+
     if (search) {
-        conditions.push(`(LOWER(DESCRIPTION) LIKE :search OR LOWER(REF_ID) LIKE :search OR LOWER(EVENT_ID) LIKE :search)`);
+        const columns = [
+            'REF_ID', 'DESCRIPTION', 'EVENT_ID', 'UNIQUE_IDENTIFIER', 'CORELATION_ID',
+            'ISPAYLOADBASE64ENCRYPTED', 'PAYLOAD', 'PRIMARY_FINDER', 'SECONDARY_FINDER',
+            'TERTIORY_FINDER', 'SOURCE_NAME', 'DESTINATION', 'MESSAGE_TYPE', 'CREATIONDATE',
+            'HOST_NAME', 'INSTANCE_NAME', 'TOPIC_NAME', 'STATUS'
+        ];
+        const searchConditions = columns.map(column => `LOWER(${column}) LIKE :search`);
+        conditions.push(`(${searchConditions.join(' OR ')})`);
         binds.search = `%${search.toLowerCase()}%`;
     }
+
+    // if (search) {
+    //     conditions.push(`(LOWER(DESCRIPTION) LIKE :search OR LOWER(REF_ID) LIKE :search OR LOWER(EVENT_ID) LIKE :search)`);
+    //     binds.search = `%${search.toLowerCase()}%`;
+    // }
+    
     if (status) {
         conditions.push(`STATUS = :status`);
-        binds.status = status;
+        binds.status = `%${status.toLowerCase()}%`;
     }
     if (type) {
         conditions.push(`MESSAGE_TYPE = :type`);
@@ -59,6 +73,7 @@ router.get('', async (req, res) => {
       ORDER BY CREATIONDATE DESC
       OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY
     `;
+    const countBinds = { ...binds };
     binds.offset = offset;
     binds.limit = limit;
 
@@ -67,7 +82,7 @@ router.get('', async (req, res) => {
         console.log("Connected to Oracle DB!");
         // Count total rows matching filters (without pagination)
         const countResult = await connection.execute(
-            `SELECT COUNT(*) AS TOTAL FROM EVENTHUB_GENERIC_EVENT_AUDIT ${whereClause}`
+            `SELECT COUNT(*) AS TOTAL FROM EVENTHUB_GENERIC_EVENT_AUDIT ${whereClause}`, countBinds
         );
         const total = countResult.rows[0].TOTAL;
 
