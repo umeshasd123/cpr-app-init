@@ -4,7 +4,7 @@ import {dateConverter} from '../utils/index.js';
 export default function SearchableDomainsTable({ data }) {
     return (
         <div className="expanded-table">
-            {(data && data.length > 0) ?
+            {(data && data?.length > 0) ?
                 <table cellPadding='0' cellSpacing='0'>
                     <thead>
                         <tr>

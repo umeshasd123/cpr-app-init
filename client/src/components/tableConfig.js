@@ -19,7 +19,7 @@ const useMetrixModel = (handleResend) => {
             size: 10,
             header: ({ table }) => {
                 const selectableRows = table.getRowModel().rows.filter(
-                    (row) => row.original.status === "failed"
+                    (row) => row.original.status === "failed" || row.original.status === 'FAILD'
                 );
                 const allSelected = selectableRows.every((row) => row.getIsSelected());
                 return <input type="checkbox" checked={allSelected} onChange={(e) => {
@@ -27,8 +27,8 @@ const useMetrixModel = (handleResend) => {
                 }} />
             },
             cell: ({ row }) => {
-                const statusVal = row.original['status'] ?? '';
-                if (statusVal === 'failed') {
+                const statusVal = row.original['STATUS'] ?? '';
+                if (statusVal === 'failed' || statusVal === 'FAILD') {
                     return <input type="checkbox" checked={row.getIsSelected()}
                         onChange={row.getToggleSelectedHandler()} />
                 }
@@ -94,8 +94,8 @@ const useMetrixModel = (handleResend) => {
             header: "", // Column header
             size: 60,
             cell: ({ row }) => {
-                const statusVal = row.original['status'] ?? '';
-                if (statusVal === 'failed') {
+                const statusVal = row.original['STATUS'] ?? '';
+                if (statusVal === 'failed' || statusVal === 'FAILD') {
                     return <button className="action-btn" onClick={() => handleResend(row)}>Retry</button>
                 }
             }

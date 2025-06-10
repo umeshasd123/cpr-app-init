@@ -6,7 +6,7 @@ const router = express.Router();
 const dbConfig = {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    connectString: process.env.DB_CONNECTION_STRING,
+    connectString:`${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_SERVICE_NAME}`,
 };
 
 // ✅ Ensure results come as JSON-style objects
@@ -39,11 +39,6 @@ router.get('', async (req, res) => {
         conditions.push(`(${searchConditions.join(' OR ')})`);
         binds.search = `%${search.toLowerCase()}%`;
     }
-
-    // if (search) {
-    //     conditions.push(`(LOWER(DESCRIPTION) LIKE :search OR LOWER(REF_ID) LIKE :search OR LOWER(EVENT_ID) LIKE :search)`);
-    //     binds.search = `%${search.toLowerCase()}%`;
-    // }
     
     if (status) {
         conditions.push(`STATUS = :status`);

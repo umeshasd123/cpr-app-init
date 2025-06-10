@@ -27,12 +27,16 @@ export default function TableContent() {
         fetch(`${apiUrl}/metrix-data?${params}`)
             .then((response) => response.json())
             .then((data) => {
-                if (data && data !== '') {
+                if (data && data !== '' && data.data) {
                     setTimeout(() => {
                         setTableData(data.data);
                         setParams(prev => ({ ...prev, total: data.total }));
                         setLoading(false)
                     }, 100);
+                } else {
+                    setTableData([]);
+                    setParams(prev => ({ ...prev, total: 0 }));
+                    setLoading(false);
                 }
             })
             .catch((error) => console.error("Error fetching data:", error));
@@ -82,7 +86,7 @@ function handleResend(rowData) {
  This function sends a POST request to the server with the selected IDs.*/
 async function resendAction(selectedIds) {
     console.log(selectedIds);
-    if (Array.isArray(selectedIds) && selectedIds.length > 0) {
+    if (Array.isArray(selectedIds) && selectedIds?.length > 0) {
         try {
             const response = await fetch(`${apiUrl}/resend`, {
                 method: "POST",
